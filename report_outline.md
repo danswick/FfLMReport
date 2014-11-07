@@ -89,14 +89,41 @@ The selected sub-watershed is 27.2 square kilometers in area, falling below the 
 
 ####Identifying a Suitable Geography
 
+While the outputs of the EVAAL tool can be useful for a wide range of watershed-level analysis, including prioritization of outreach to land owners with high potential for mitigation soil loss, not all potential project geographies are suitable. During this process, area of interest selection was primarily limited by inconsistent availability of LiDAR data. This is especially notable since this project was focused on Wisconsin, a state with an unusually high level of data accessibility and coordinated LiDAR data acquisition strategy. Other states with less coordinated LiDAR-related activities may be significantly more limiting. 
+
 ####Prioritization vs. Performance Evaluation
+
+The creators of the EVAAL tool make it clear that the tool is not intended to be used to evaluate performance on individual parcels of land or to quantify whole-watershed runoff figures. Rather, the EVAAL tool is specifically intended to aid watershed managers, project developers and other interested stakeholders in prioritizing their work, specifically as it concerns erosion mitigation. This is particularly notable for the state of Wisconsin, which has officially adopted a field-scale agricultural nutrient management planning tool called [SnapPlus](http://snapplus.wisc.edu/). SnapPlus is specifically designed to evaluate field-level nutrient losses and to help farmers plan to take measures to mitigate those losses. 
+
+This contrast between approaches - field-level evaluation vs watershed-scale prioritization - illustrates a potential for a more robust, multi-scale system for planning mitigation work within a watershed. The project team recommends future work be done to better understand how these tools can be utilized in tandem to create a more complete picture of a watershed. 
 
 ###LiDAR vs DEM
 
+>compare CLU rankings (EVI)
+>histogram of values for each EVI and compare 
+>discuss time required to run each
+
 ####CLU Ranking
+
+EVAAL includes a function to summarize the erosion vulnerability index (EVI) by subdivision chosen by the user. Because this project is being done in the context of agricultural nutrient management, the EVI data was subdivided by USDA Common Land Unit (CLU) to simulate the prioritization of outreach to farmers within a watershed. USDA defines a CLU as: 
+
+>...the smallest unit of land that has a permanent, contiguous boundary, a common land cover and land management, a common owner and a common producer in agricultural land associated with USDA farm programs. CLU boundaries are delineated from relatively permanent features such as fence lines, roads, and/or waterways.
+
+As outlined in step 6.6 of the official EVAAL tutorial, two CLU summary tables were generated: one based on 10-meter DEM data and the other based on the LiDAR-derived DEM. This was done to identify the degree of overlap between each dataset within a smaller subset of data. The table below illustrates the difference between two subsets (the top ten CLUs from each dataset, ranked by mean EVI) of ranked CLUs. Only three CLUs from the respective top ten CLU subsets overlapped and, while the relative position between those three CLUs was consistent, the mean EVIs differed by between 10 and 20%, demonstrating a significant sensitivity to input DEM data. 
+
+![Top 10 CLUs](/images/Top10CLUs.png)
 
 ####Internally-Drained Areas
 
+Another major differentiator between the 10-meter and LiDAR-derived DEM-derived results was the lack of internally-draining areas from the 10-meter DEM data. The EVAAL tool identifies internally-draining areas by utilizing:
+
+1. The conditioned DEM and optimized fill rasters generated in step 6.1
+2. The curve number raster generated in step 6.2.2 (note: the user must choose either the high or low estimated curve raster number)
+3. The frequency-duration raster generated in step 6.2.1 (note: the frequency-duration raster is dependent on the users' selection of a design storm duration and frequency. The default is 10 years-24 hours, but this value can be changed)
+
+For the purposes of this investigation, only the default duration-frequency was tested and it is possible that different parameters could result in delineation of internally-draining areas. However, the results used for this analysis did not include any internally-draining areas. Because EVAAL excludes internally-draining areas in the process of generating the EVI, the area modeled to determine 10-meter DEM-derived data is slightly higher. 
+
+![Internally-draining areas](/images/IDA.png) 
 
 ##Next Steps
 
