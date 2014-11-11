@@ -68,19 +68,26 @@ The selected sub-watershed is 27.2 square kilometers in area, falling below the 
 
 ![subwatershed](C:\Users\dswick.DELTA\GitHub\FfLMReport\images\subwatershed.jpg)
 
-##Process
 
-###Data Collection
+##Process
 
 ###Running the EVAAL Tool
 
+To generate the data found in this report, the project team followed Wisconsin DNR's official EVAAL tutorial, which is included with the EVAAL toolbox and associated files. We downloaded these files from Wisconsin DNR's GitHub repository, located at [https://github.com/dnrwaterqualitymodeling/EVAAL](https://github.com/dnrwaterqualitymodeling/EVAAL). 
+
+While running through the tutorial process, we kept a detailed log of each step, the associated data inputs and outputs, troubleshooting notes and error messages. This log can be found as an appendix to this report. 
+
 ###Providing Feedback to Wisconsin DNR
+
+Throughout the process of preparing this report, the team provided feedback to Wisconsin DNR regarding bugs, installation issues and error messages, primarily by utilizing GitHub's issue tracking feature. The issues related to the EVAAL tool can be found online at [https://github.com/dnrwaterqualitymodeling/EVAAL/issues](https://github.com/dnrwaterqualitymodeling/EVAAL/issues). The team continues to communicate with Wisconsin DNR regarding the development of the EVAAL tool, as well as possible applications and integration with other tools and models, such as the SnapPlus nutrient management planning tool. 
 
 ###Analysis
 
-####Identifying Opportunities for BMPs
+In order to analyze the complex outputs from EVAAL, the team followed suggestions from the EVAAL tutorial and made qualitative observations using the tools built into ArcGIS. These analyses included: 
 
-####Identifying High Priority CLUs
+1. **Identify Opportunities for BMPs**: by subtracting EVAAL's best-case scenario estimates from its worst-case scenario estimates, we are able to get a high-level impression of regions within the watershed that may provide the highest return in nutrient loss reductions. This kind of analysis is possible because of EVAAL's fundamental approach to assessing erosion risk within a watershed. That is, rather than attempt to capture all of the extremely detailed data necessary to make perfect assessments across the landscape, EVAAL allows the user to 'bracket' their estimates on the high and low end or, if the user wishes, enter custom parameters to examine this range of values further. 
+2. **Identify High Priority CLUs**: During EVAAL's EVI step, a user can pass a watershed subdivision file and EVAAL will return a summary table of values for each subdivision in question. Because the target watershed for this report is primarily agricultural and because the results of the process will be used to prioritize outreach to farmers, CLUs were used as the watershed subdivision. 
+3. **Examine NED and LiDAR DEM distributions**: In order to get a better idea of now NED and LiDAR DEMs were influencing the outcomes of the process, the team generated a large number of histograms, which give a high-level snapshot of the distribution of values within a dataset. 
 
 
 ##Findings 
@@ -99,9 +106,56 @@ This contrast between approaches - field-level evaluation vs watershed-scale pri
 
 ###LiDAR vs DEM
 
->compare CLU rankings (EVI)
+####Outputs
+
 >histogram of values for each EVI and compare 
->discuss time required to run each
+
+While the outputs from these two model runs are immediately recognizable as different from one another, it is helpful to produce histograms of each output file in order to more quantitatively compare the results. Below are several ouputs for comparrison: 
+
+1. Conditioned DEM: A DEM that has been conditioned by EVAAL to include culvert polylines and recalculated to ensure all water can drain off of the landscape 
+2. Stream Power Index (SPI): used to describe a given point's potential flow erosion in the context of the surrounding landscape
+3. Soil Loss Potential: potential soil loss due to sheet and rill erosion, as calculated using the Universal Soil Loss Equation (USLE)
+4. Erosion Vulnterability Index (EVI): a combination of the soil loss potential, stream power index and internally-drained areas to derive a single index of erosion vulnerability. 
+5. Opportunities for Best Management Practices (BMPs): The mathematical difference between the EVI in a best case scenario and the EVI in a worst case scenario
+
+![Conditioned DEM - 10-meter NED](C:\Users\dswick.DELTA\GitHub\FfLMReport\images\histograms\DEM_conditioned.png)
+
+![Conditioned DEM - LiDAR](C:\Users\dswick.DELTA\GitHub\FfLMReport\images\histograms\LiDAR_conditioned.png)
+
+The conditioned DEM is the basis for many of EVAAL's data outputs and, as a result, impacts the values of each of those outputs. As is immediately apparent, these histograms are similar, but the NED DEM includes some spikes toward the middle of the distribution curve, which may influence the values of derived datasets. It is also important to note that the LiDAR DEM's higher resolution means there are more pixels to count (the Y-axis), necessitating a careful examination of the distribution curve. For example, the "spiky" regions of the NED DEM peak at around 2,500, which is similar to the peak of the middle portions of the LiDAR DEM. Similarly, the LiDAR DEM shows a higher frequency of pixels toward the left end of the histogram, which represents low elevation regions of the watershed. 
+
+![Stream Power Index - 10-meter NED](C:\Users\dswick.DELTA\GitHub\FfLMReport\images\histograms\DEM_SPI.png)
+
+![Stream Power Index - LiDAR](C:\Users\dswick.DELTA\GitHub\FfLMReport\images\histograms\LiDAR_SPI.png)
+
+The SPI for these two datasets appears quite different, but, like the conditioned DEM datasets above, reflects the LiDAR DEM's higher frequency of low-elevation areas. The peaks of the NED DEM closely match the peaks of the LiDAR DEM's middle section, indicating a similar distribution of SPI values in all but the low-lying regions of the watershed.
+
+![Soil Loss Potential - 10-meter NED](C:\Users\dswick.DELTA\GitHub\FfLMReport\images\histograms\DEM_soilLoss-hicFact.png)
+
+![Soil Loss Potential - LiDAR](C:\Users\dswick.DELTA\GitHub\FfLMReport\images\histograms\LiDAR_soilLoss-hicFact.png)
+
+The soil loss potential for each of the two datasets is strikingly similar. This is largely due to the fact that the inputs to USLE were the same for each model run. The exception is *LS*, or `slope/slope-length`, which differs slightly in some areas, dependent on the the DEM. The formula for calculating soil loss potential is: 
+
+>`E = R * K * LS * C * P`
+
+>- **E** soil loss 
+>- **R** rainfall erosivity 
+>- **K** soil erodability 
+>- **LS** slope/slope-length
+>- **C** land cover factor
+>- **P** practice factor 
+
+![EVI - 10-meter NED](C:\Users\dswick.DELTA\GitHub\FfLMReport\images\histograms\DEM_EVI-lowcFact.png)
+
+![EVI - LiDAR](C:\Users\dswick.DELTA\GitHub\FfLMReport\images\histograms\LiDAR_EVI-lowcFact.png)
+
+Much like the SPI and conditioned DEM histograms from above, these EVI histograms show a similar distribution between the NED and LiDAR DEMs, with the exception of the left side of the graph. This again reflects a higher frequency of low-lying areas in the LiDAR-based DEM. 
+
+![Opportunities for BMPs - 10-meter NED](C:\Users\dswick.DELTA\GitHub\FfLMReport\images\histograms\DEM_BMPs.png)
+
+![Opportunities for BMPs - LiDAR](C:\Users\dswick.DELTA\GitHub\FfLMReport\images\histograms\LiDAR_BMPs.png)
+
+These two histograms, which illustrate the difference between the best- and worst-case scenario estimates from EVAAL, look quite different but illustrate a similar phenomenon. Value frequencies exhibit exponential growth as they move from the left side of the graph toward the middle, quickly reach a maximum value, then exhibit a logarithmic decline as they move toward the right edge of the graph. This is difficult to see in the LiDAR histogram because it hits such an extreme maximum and experiences a few more spikes toward the right end of the spectrum. 
 
 ####CLU Ranking
 
@@ -121,18 +175,29 @@ Another major differentiator between the 10-meter and LiDAR-derived DEM-derived 
 2. The curve number raster generated in step 6.2.2 (note: the user must choose either the high or low estimated curve raster number)
 3. The frequency-duration raster generated in step 6.2.1 (note: the frequency-duration raster is dependent on the users' selection of a design storm duration and frequency. The default is 10 years-24 hours, but this value can be changed)
 
-For the purposes of this investigation, only the default duration-frequency was tested and it is possible that different parameters could result in delineation of internally-draining areas. However, the results used for this analysis did not include any internally-draining areas. Because EVAAL excludes internally-draining areas in the process of generating the EVI, the area modeled to determine 10-meter DEM-derived data is slightly higher. 
+For the purposes of this investigation, only the default duration-frequency was tested and it is possible that different parameters could result in delineation of internally-draining areas. However, the results used for this analysis did not include any internally-draining areas derived from the 10-meter DEM. Because EVAAL excludes internally-draining areas in the process of generating the EVI, the area modeled to determine 10-meter DEM-derived data is slightly higher. 
 
 ![Internally-draining areas](C:\Users\dswick.DELTA\GitHub\FfLMReport\images\IDA.png) 
+
+This discrepency helps to explain the differences in output between the two modeling scenarios and could have implications for areas in which LiDAR data is not readily available. Further analysis will need to be conducted to determine the magnitude of this effect, but EVAAL users should be cautious when using lower resolution elevation data during their analysis.
+
 
 ##Next Steps
 
 ###Apply EVAAL Tool
 
->to real-world project from the beginning. Timing of EVAAL tool realase, etc
+During future projects, the project team plans to apply the EVAAL tool to on-the-ground farmer outreach efforts. The tool's outputs, in combination with local data and expertise, have the potential to help prioritize outreach, maximize the performance of nutrient management practices and stretch project budgets. 
 
-###In Combination with Field-Scale Model Outputs
+###Combine with Field-Scale Model Outputs
 
->EVAAL team's validation methods, p.19, methods doc. 
+Wisconsin is unique in that its environmental regulatory body has developed two state-specific tools to aid in agricultural nutrient management efforts: SnapPlus, which operates at a field-by-field scale, and EVAAL, which operates at a watershed scale. The project team would like to evaluate these tools' potential to compliment one another, providing a multi-scale perspective within a watershed and ultimately leading to more strategic investment in nutrient management best practices across the state and potentially other neighboring states. 
 
->work with SnapPlus team to determine feasibility of integrating the two tools for field- and watershed-scale perspective 
+As part of the EVAAL development process, the Wisconsin DNR team validated the tool's outputs against those of SnapPlus for the same geography. The EVAAL team found the results to be well correlated, which is encouraging for future on-the-ground projects. The results of this validation can be found on page 19 of the EVAAL methods doc, available on GitHub here: [https://github.com/dnrwaterqualitymodeling/EVAAL/blob/master/doc/EVAAL_Methods_v1_0_SEP2014.pdf](https://github.com/dnrwaterqualitymodeling/EVAAL/blob/master/doc/EVAAL_Methods_v1_0_SEP2014.pdf). 
+
+##To-Do
+
+>1. Consistent teminology for LiDAR / DEM / 10-meter DEM. Suggest LiDAR vs NED (nat'l elev dataset) 
+>2. Delta branding
+>3. Consistent image formatting 
+>4. Edit for accuracy and style 
+
